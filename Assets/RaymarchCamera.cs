@@ -38,6 +38,9 @@ public class RaymarchCamera : MonoBehaviour
     }
     private Camera _cam;
 
+    public float _maxDistance;
+    public Vector4 Sphere1;
+
     private void OnRenderImage(RenderTexture source, RenderTexture destination)
     {
         if(!_raymarchMaterial)
@@ -48,8 +51,8 @@ public class RaymarchCamera : MonoBehaviour
         //shader에 있는 _CamFrustum,_CamToWorld,_CamWorldSpace에 값을 지정
         _raymarchMaterial.SetMatrix("_CamFrustum", CamFrustum(_Camera));
         _raymarchMaterial.SetMatrix("_CamToWorld", _Camera.cameraToWorldMatrix);
-        _raymarchMaterial.SetVector("_CamWorldSpace", _Camera.transform.position);
-
+        _raymarchMaterial.SetFloat("max_distance", _maxDistance);
+        _raymarchMaterial.SetVector("_sphere1", Sphere1);
         //Quad를 생성하는 과정 Quad를 입방체 끝에다가 형성
         RenderTexture.active = destination;
         GL.PushMatrix();
