@@ -9,4 +9,7 @@ Hit FX
 RayMarching  
 22-04-13  
 1.Camera  
-![Cam](https://user-images.githubusercontent.com/101923824/163113344-5f8bc9d9-b672-434b-8354-ae49fcb68c72.PNG)
+![Cam](https://user-images.githubusercontent.com/101923824/163113344-5f8bc9d9-b672-434b-8354-ae49fcb68c72.PNG)  
+22-04-14  
+2.Sphere  
+![raymarch2](https://user-images.githubusercontent.com/101923824/163381029-470c7b20-1acd-4b01-afab-8b2dfb7bcd22.PNG)
