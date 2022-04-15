@@ -38,6 +38,8 @@ public class RaymarchCamera : MonoBehaviour
     }
     private Camera _cam;
 
+    public Transform _directionalLight;
+
     public float _maxDistance;
     public Vector4 Sphere1;
 
@@ -53,6 +55,7 @@ public class RaymarchCamera : MonoBehaviour
         _raymarchMaterial.SetMatrix("_CamToWorld", _Camera.cameraToWorldMatrix);
         _raymarchMaterial.SetFloat("max_distance", _maxDistance);
         _raymarchMaterial.SetVector("_sphere1", Sphere1);
+        _raymarchMaterial.SetVector("_LightDir", _directionalLight?_directionalLight.forward:Vector3.down);//라이트가 빛을 쏘는 방향을 벡터로 집어넣는다.
         //Quad를 생성하는 과정 Quad를 입방체 끝에다가 형성
         RenderTexture.active = destination;
         GL.PushMatrix();

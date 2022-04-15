@@ -22,6 +22,7 @@
             uniform float4x4 _CamFrustum, _CamToWorld;
             uniform float max_distance;
             uniform float4 _sphere1;
+            uniform float3 _LightDir;
 
             struct appdata
             {
@@ -53,7 +54,7 @@
             float sdSphere(float3 p,float s)
             {
                 //거리함수 참조:https://iquilezles.org/www/articles/distfunctions/distfunctions.htm
-                return length(p) - s;
+                return length(p) - s;//length(point - center) - radius;
             }
 
             float distanceField(float3 p)
@@ -62,10 +63,23 @@
                 return Sphere1;
             }
 
+            float3 getNormal(float3 p)
+            {
+                //기존 포인트보다 미세하게 떨어진 위치에서 가장 가까운 표면까지의 거리를 계산하여, 그 차이 만틈 x,y,z를 구성한다.
+                //노말은 상대적이기 떄문에 이와 같은 방법을 사용한다.
+                const float2 offset = float2(0.001, 0.0);
+                float3 n = float3(
+                    distanceField(p + offset.xyy) - distanceField(p - offset.xyy),
+                    distanceField(p + offset.yxy) - distanceField(p - offset.yxy),
+                    distanceField(p + offset.yyx) - distanceField(p - offset.yyx)
+                    );
+                return normalize(n);//그리고 그것을 노말화 한다.
+            }
+
             fixed4 rayMarching(float3 ro, float3 rd)
             {
                 float4 result = float4(1, 1, 1, 1);
-                const int max_iteration = 64;//최대 반복 수
+                const int max_iteration = 100;//최대 반복 수
                 float t = 0;//광선 방향을 따라 이동한 거리
 
                 for (int i = 0; i < max_iteration; i++)
@@ -79,14 +93,16 @@
 
                     float3 p = ro + rd * t;
                     //거리 함수를 이용하기 위해서는 각 물체들에 대한 거리가 필요함으로 이것을 확인한다.
-                    float d = distanceField(p);
+                    float d = distanceField(p);//d는 현재 발사중인 레이로부터 가장 가까운 거리에 있는 표면까지의 거리 
                     if (d < 0.01)//거리가 0.01 이하라는 뜻은 그자리에 무언가 있다는 뜻이다.
                     {
                         //shading
-                        result = fixed4(1, 1, 1, 1);//그 자리를 흰색으로 칠한다.
+                        float3 n = getNormal(p);
+                        float light = dot(-_LightDir, n);//노말벡터와 라이트의 내적값으로 각도 차이에 따른 색을 변경한다.
+                        result = fixed4(1,1,1,1)*light;//그 자리를 흰색으로 칠한다.
                         break;
                     }
-                    t += d;
+                    t += d;//t는 누적값
                 }
                 return result;
             }
